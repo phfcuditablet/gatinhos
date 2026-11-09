@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Achei os gatinhos</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+  <h1>Você consegue encontrar TODOS os gatinhos?</h1>
+  <ul class="regras">
+    <li>1 gato por cor</li>
+    <li>1 gato por coluna e linha</li>
+    <li>Os gatos não podem tocar</li>
+  </ul>
+  <div class="placar">
+    <div class="pilula" id="contador"></div>
+    <div class="pilula" id="vidas" aria-label="Vidas"></div>
+  </div>
+  <div class="nivel" id="nivel"></div>
+  <div class="tabuleiro" id="tabuleiro" role="grid"></div>
+  <p class="dica-uso">Toque uma vez para marcar ✕, duas vezes para colocar o gato, três para limpar.</p>
+  <div class="botoes">
+    <button id="btnDica">Dica</button>
+    <button id="btnReiniciar">Recomeçar</button>
+  </div>
+</main>
+<div class="tela" id="telaFim" hidden>
+  <div class="caixa">
+    <div class="caixa-gato" id="caixaGato"></div>
+    <h2 id="fimTitulo"></h2>
+    <p id="fimTexto"></p>
+    <button id="btnFim"></button>
+  </div>
+</div>
+<script src="puzzle.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
