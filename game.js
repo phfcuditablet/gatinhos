@@ -27,6 +27,9 @@ const el = {
   caixaGato: document.getElementById('caixaGato')
 };
 
+const VIDAS_MAX = 7;
+let mostrarAjuda = true;
+try { mostrarAjuda = localStorage.getItem('gatinhos-ajuda') !== '0'; } catch (e) {}
 let nivel = 1;
 try { nivel = parseInt(localStorage.getItem('gatinhos-nivel'), 10) || 1; } catch (e) {}
 let fase, estado, vidas, acabou;
@@ -35,7 +38,7 @@ function iniciar() {
   fase = gerarFase(nivel);
   const n = fase.n;
   estado = Array.from({ length: n }, () => new Array(n).fill(0)); // 0 vazio, 1 X, 2 gato
-  vidas = 3; acabou = false;
+  vidas = VIDAS_MAX; acabou = false;
   el.tela.hidden = true;
   desenhar();
 }
@@ -50,11 +53,6 @@ function desenhar() {
     b.type = 'button';
     b.className = 'celula';
     b.style.background = CORES[reg[r][c] % CORES.length];
-    const id = reg[r][c];
-    if (r === 0 || reg[r - 1][c] !== id) b.classList.add('bt');
-    if (r === n - 1 || reg[r + 1][c] !== id) b.classList.add('bb');
-    if (c === 0 || reg[r][c - 1] !== id) b.classList.add('bl');
-    if (c === n - 1 || reg[r][c + 1] !== id) b.classList.add('br');
     b.dataset.r = r; b.dataset.c = c;
     b.addEventListener('click', () => tocar(r, c));
     el.tab.appendChild(b);
@@ -78,18 +76,41 @@ function conflitos() {
   return { gatos: gatos.length, ruins };
 }
 
+function bloqueadas() {
+  const n = fase.n, reg = fase.regioes;
+  const auto = Array.from({ length: n }, () => new Array(n).fill(false));
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
+    if (estado[r][c] !== 2) continue;
+    for (let rr = 0; rr < n; rr++) for (let cc = 0; cc < n; cc++) {
+      if (estado[rr][cc] === 2) continue;
+      if (rr === r || cc === c || reg[rr][cc] === reg[r][c] ||
+          (Math.abs(rr - r) <= 1 && Math.abs(cc - c) <= 1)) auto[rr][cc] = true;
+    }
+  }
+  return auto;
+}
+
 function atualizar() {
   const n = fase.n;
   const { gatos, ruins } = conflitos();
+  const auto = bloqueadas();
+  const bloq = (r, c) => r >= 0 && r < n && c >= 0 && c < n && estado[r][c] !== 2 && (estado[r][c] === 1 || auto[r][c]);
   for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) {
     const b = celulaEl(r, c), v = estado[r][c];
-    b.innerHTML = v === 1 ? SVG_X : v === 2 ? svgGato() : '';
+    const sombra = mostrarAjuda && v === 0 && auto[r][c];
+    b.innerHTML = v === 1 ? SVG_X : v === 2 ? svgGato() : sombra ? SVG_X : '';
+    b.classList.toggle('auto', sombra);
+    const dentro = mostrarAjuda && bloq(r, c);
+    b.classList.toggle('bt', dentro && !bloq(r - 1, c));
+    b.classList.toggle('bb', dentro && !bloq(r + 1, c));
+    b.classList.toggle('bl', dentro && !bloq(r, c - 1));
+    b.classList.toggle('br', dentro && !bloq(r, c + 1));
     b.classList.toggle('conflito', ruins.has(r * n + c));
     b.setAttribute('aria-label', 'Linha ' + (r + 1) + ', coluna ' + (c + 1) + ': ' + (v === 1 ? 'marcado' : v === 2 ? 'gato' : 'vazio'));
   }
   el.cont.innerHTML = svgGato() + '<span class="' + (gatos === n ? 'ok' : '') + '">' + gatos + '/' + n + '</span>';
   el.vidas.innerHTML = '';
-  for (let i = 0; i < 3; i++) el.vidas.innerHTML += '<span class="coracao ' + (i < vidas ? '' : 'perdido') + '">❤️</span>';
+  for (let i = 0; i < VIDAS_MAX; i++) el.vidas.innerHTML += '<span class="coracao ' + (i < vidas ? '' : 'perdido') + '">❤️</span>';
   if (gatos === n && ruins.size === 0) fimDeJogo(true);
 }
 
@@ -143,6 +164,14 @@ document.getElementById('btnDica').addEventListener('click', () => {
       return;
     }
   }
+});
+
+const chk = document.getElementById('chkAjuda');
+chk.checked = mostrarAjuda;
+chk.addEventListener('change', () => {
+  mostrarAjuda = chk.checked;
+  try { localStorage.setItem('gatinhos-ajuda', mostrarAjuda ? '1' : '0'); } catch (e) {}
+  atualizar();
 });
 
 iniciar();

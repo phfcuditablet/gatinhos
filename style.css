@@ -43,3 +43,11 @@ button:focus-visible{outline:3px solid #2b1d1d;outline-offset:2px}
 .caixa h2{margin:8px 0;color:#2b1d1d;font-size:1.6rem}
 .caixa p{margin:0 0 18px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.celula.auto svg.x{opacity:.45}
+.celula{border-color:#e53935}
+.ajuda{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:700;font-size:.92rem;margin:0 0 14px;cursor:pointer}
+.ajuda input{width:22px;height:22px;accent-color:#4aa59b}
+.pilula{font-size:1.8rem;padding:6px 16px}
+#vidas{flex-wrap:wrap;justify-content:center;gap:2px;max-width:230px}
+.coracao{font-size:1.25rem}
