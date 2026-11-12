@@ -51,3 +51,8 @@ button:focus-visible{outline:3px solid #2b1d1d;outline-offset:2px}
 .pilula{font-size:1.8rem;padding:6px 16px}
 #vidas{flex-wrap:wrap;justify-content:center;gap:2px;max-width:230px}
 .coracao{font-size:1.25rem}
+
+footer{display:flex;justify-content:flex-start;padding:4px max(14px,env(safe-area-inset-left)) max(14px,env(safe-area-inset-bottom))}
+footer a{width:48px;height:48px;border-radius:50%;background:var(--texto);color:var(--fundo);font:700 26px/46px system-ui,sans-serif;text-align:center;text-decoration:none;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+footer a:active{transform:translateY(2px)}
+footer a:focus-visible{outline:3px solid #2b1d1d;outline-offset:2px}
